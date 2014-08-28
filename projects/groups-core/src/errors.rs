@@ -1,11 +1,11 @@
 pub type Result<T> = std::result::Result<T, GroupError>;
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct GroupError {
     kind: GroupErrorKind,
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum GroupErrorKind {
     InvalidPermutation,
 }
@@ -19,8 +19,6 @@ impl GroupError {
 }
 
 impl GroupError {
-
-
     pub fn kind(&self) -> &GroupErrorKind {
         &self.kind
     }
