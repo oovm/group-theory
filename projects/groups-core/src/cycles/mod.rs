@@ -12,15 +12,42 @@ pub struct Cycles {
     cycles: Vec<Vec<usize>>,
 }
 
+impl Default for Cycles {
+    fn default() -> Self {
+        Self {
+            cycles: vec![],
+        }
+    }
+}
+
 impl Cycles {
-    /// 找到能将 last 列表变为 next 列表的置换
-    fn find_permutation<T: PartialEq>(last: &[T], next: &[T]) -> Result<Self, GroupError> {
+    pub fn new(cycles: Vec<Vec<usize>>) -> Self {
+        Self { cycles }.standardize()
+    }
+    pub unsafe fn new_unchecked(cycles: Vec<Vec<usize>>) -> Self {
+        Self { cycles }
+    }
+    fn standardize(&mut self) -> Self {
+        let mut cycles = Vec::with_capacity(self.cycles.len());
+        for cycle in self.cycles.iter() {
+            let mut cycle = cycle.clone();
+            cycle.sort();
+            cycle.dedup();
+            cycles.push(cycle);
+        }
+        cycles.sort();
+        cycles.dedup();
+        Self { cycles }
+    }
+
+    /// Find the permutation that can turn the last list into the next list
+    pub fn find_permutation<T: PartialEq>(last: &[T], next: &[T]) -> Result<Self, GroupError> {
         // Check if the lengths of the input slices are equal
         if last.len() != next.len() {
             return Err(GroupError::invalid_permutation());
         }
 
-        let mut cycles: Vec<Vec<usize>> = Vec::new();
+        let mut cycles: Vec<Vec<usize>> = Vec::with_capacity(4);
         let mut visited: Vec<bool> = vec![false; last.len()];
 
         for i in 0..last.len() {
@@ -56,6 +83,33 @@ impl Cycles {
 }
 
 impl Cycles {
+    /// Calculate the period of the permutation
+    pub fn period(&self) -> usize {
+        self.cycles.iter().map(|s| s.len()).sum()
+    }
+    /// Get the inverse cycle permutation
+    pub fn inverse(&self) -> Self {
+        let mut cycles = Vec::new();
+        for cycle in self.cycles.iter() {
+            let mut inverse_cycle = Vec::new();
+            for i in cycle.iter().rev() {
+                inverse_cycle.push(*i);
+            }
+            cycles.push(inverse_cycle);
+        }
+        Self { cycles }
+    }
+    pub fn swap_pairs(&self) -> Vec<(usize, usize)> {
+        let mut pairs = Vec::with_capacity(self.cycles.iter().map(|s| s.len()).sum());
+        for cycle in self.cycles.iter() {
+            for i in 0..cycle.len() {
+                let current = *cycle.get(i).unwrap();
+                let next = *cycle.get((i + 1) % cycle.len()).unwrap();
+                pairs.push((current, next));
+            }
+        }
+        pairs
+    }
 
     /// Permute the data by cycles
     pub fn permute<T: Clone>(&self, data: &[T]) -> Vec<T> {
@@ -83,17 +137,7 @@ impl Cycles {
     }
 }
 
-#[test]
-fn test_cycles() {
-    let mut this = vec![6, 1, 2, 7, 0, 4, 8, 3, 5];
-    let last = vec![0, 1, 2, 3, 4, 5, 6, 7, 8];
-    let cycles = Cycles::find_permutation(&this, &last).unwrap();
-    // {{0, 6, 8, 5, 4}, {3, 7}}
-    println!("{:?}", cycles);
-    let next = cycles.permute(&mut this);
-    println!("{:?}", next);
-}
-
+#[derive(Clone, Debug)]
 pub struct PermutationRecord {
     /// 每两行之间的变换
     permutes: Vec<Vec<(usize, usize)>>,
