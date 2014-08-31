@@ -21,13 +21,13 @@ impl Default for Cycles {
 }
 
 impl Cycles {
-    pub fn new(cycles: Vec<Vec<usize>>) -> Self {
+    pub fn new(cycles: Vec<Vec<usize>>) -> Result<Self, GroupError> {
         Self { cycles }.standardize()
     }
     pub unsafe fn new_unchecked(cycles: Vec<Vec<usize>>) -> Self {
         Self { cycles }
     }
-    fn standardize(&mut self) -> Self {
+    fn standardize(&mut self) -> Result<Self, GroupError> {
         let mut cycles = Vec::with_capacity(self.cycles.len());
         for cycle in self.cycles.iter() {
             let mut cycle = cycle.clone();
@@ -37,7 +37,7 @@ impl Cycles {
         }
         cycles.sort();
         cycles.dedup();
-        Self { cycles }
+        Ok(Self { cycles })
     }
 
     /// Find the permutation that can turn the last list into the next list

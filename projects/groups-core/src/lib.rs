@@ -8,3 +8,4 @@ mod errors;
 mod cycles;
 
 pub use crate::errors::{GroupError, GroupErrorKind, Result};
+pub use crate::cycles::{Cycles, PermutationRecord};
