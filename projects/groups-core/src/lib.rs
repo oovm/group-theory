@@ -1,3 +1,6 @@
+#![feature(impl_trait_in_assoc_type)]
+#![feature(iter_from_coroutine)]
+#![feature(coroutines)]
 #![deny(missing_debug_implementations, missing_copy_implementations)]
 #![warn(missing_docs, rustdoc::missing_crate_level_docs)]
 #![doc = include_str!("../readme.md")]
@@ -5,7 +8,8 @@
 #![doc(html_favicon_url = "https://raw.githubusercontent.com/oovm/shape-rs/dev/projects/images/Trapezohedron.svg")]
 
 mod errors;
+mod permutations;
 mod cycles;
 
 pub use crate::errors::{GroupError, GroupErrorKind, Result};
-pub use crate::cycles::{Cycles, PermutationRecord};
+pub use crate::cycles::{CycleElement, CycleNotation};
