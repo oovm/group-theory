@@ -1,3 +1,4 @@
+use std::fmt::{Debug, Display, Formatter, Write};
 use ndarray::prelude::*;
 use svg::node::element::path::Data;
 use svg::node::element::{Definitions, Marker, Path};
@@ -8,14 +9,16 @@ use std::iter::from_coroutine;
 
 mod elements;
 mod notations;
+mod display;
 
 mod iterations;
 
-#[derive(Clone, Debug, Default, Ord, PartialOrd, Eq, PartialEq, Hash)]
+#[derive(Clone, Default, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub struct CycleElement {
     /// Use indexes to represent the permutation
     pub(crate) chain: Vec<usize>,
 }
+
 
 /// 群置换
 #[derive(Debug)]
@@ -23,4 +26,3 @@ pub struct CycleNotation {
     /// Use indexes to represent the permutation
     pub(crate) cycles: Vec<CycleElement>,
 }
-

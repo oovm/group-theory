@@ -1,9 +1,13 @@
+use std::ops::Index;
 use super::*;
 
 
 impl CycleElement {
     pub fn length(&self) -> usize {
         self.chain.len()
+    }
+    pub fn get_chain(&self) -> &[usize] {
+        &self.chain
     }
     /// Permute the data by permutations
     pub fn apply<T: Clone>(&self, data: &[T]) -> Vec<T> {
@@ -26,5 +30,13 @@ impl CycleElement {
                 data.swap(saved.unwrap_unchecked(), next);
             }
         }
+    }
+}
+
+impl Index<usize> for CycleElement {
+    type Output = usize;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.chain[index]
     }
 }

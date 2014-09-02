@@ -21,7 +21,7 @@ fn new_cycles() {
         println!("{} -> {}", src, to);
     }
     // {{0, 17, 6}, {1, 4, 3, 9}}
-    println!("{:?}", cycles);
+    println!("{}", cycles.unwrap());
 
 }
 
